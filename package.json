@@ -1,0 +1,102 @@
+{
+  "name": "path-go-to-definition",
+  "displayName": "Path Go To Definition",
+  "description": "Extends the \"Go to Definition\" (F12) action to support file paths in strings",
+  "version": "1.0.0",
+  "icon": "./etc/icon.png",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Other"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ascpixi/vscode-path-go-to-definition"
+  },
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Path Go To Definition",
+      "properties": {
+        "pathGoToDefinition.projectRootRegex": {
+          "type": "string",
+          "default": "^(?:\\/|\\\\).+$",
+          "description": "The regex to use when checking for paths that are relative to the project's root directory. Matches the whole string."
+        },
+        "pathGoToDefinition.relativeRegex": {
+          "type": "string",
+          "default": "^\\.(?:\\/|\\\\).+$",
+          "description": "The regex to use when checking for paths that are relative to the directory the file is in. Matches the whole string."
+        },
+        "pathGoToDefinition.langWhitelist": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Language IDs that the extension should handle. If empty, all languages are handled."
+        },
+        "pathGoToDefinition.filenameWhitelist": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "If any of the regex patterns in the array match the relative path of a document, the extension will be active for that document. If empty, no checks are performed."
+        },
+        "pathGoToDefinition.specific": {
+          "type": "array",
+          "description": "Allows for specialized configuration sets for different languages or file types.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "language": {
+                "type": ["string", "null"],
+                "description": "The language ID that this specific configuration set matches.",
+                "default": null
+              },
+              "path": {
+                "type": ["string", "null"],
+                "description": "The regular expression to match against the file path to determine whether this configuration set applies.",
+                "default": null
+              },
+              "projectRootRegex": {
+                "type": ["string", "null"],
+                "default": null,
+                "description": "The regex to use when checking for paths that are relative to the project's root directory. Matches the whole string. If null or empty, uses the global default."
+              },
+              "relativeRegex": {
+                "type": ["string", "null"],
+                "default": null,
+                "description": "The regex to use when checking for paths that are relative to the directory the file is in. Matches the whole string. If null or empty, uses the global default."
+              },
+              "defaultFile": {
+                "type": ["string", "null"],
+                "description": "If a path points to a directory, the extension will navigate to the file with this name in that directory.",
+                "default": null
+              }
+            }
+          }
+        }
+      } 
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "@typescript-eslint/parser": "^7.11.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0"
+  }
+}
