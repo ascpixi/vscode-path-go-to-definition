@@ -3,6 +3,10 @@
   "displayName": "Path Go To Definition",
   "description": "Extends the \"Go to Definition\" (F12) action to support file paths in strings",
   "version": "1.0.0",
+  "author": {
+    "name": "ascpixi"
+  },
+  "publisher": "ascpixi",
   "icon": "./etc/icon.png",
   "engines": {
     "vscode": "^1.90.0"
