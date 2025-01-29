@@ -6,9 +6,9 @@ import {
     Position,
     ProviderResult,
     TextDocument
-} from "vscode";
+} from "vscode";    
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 import { knownLanguageProps } from "./known-languages";
 import { config } from "./config";
 
@@ -145,6 +145,7 @@ export class PathDefinitionProvider implements DefinitionProvider {
         let defaultFile: string | null = null;
         let relativeRegex: RegExp | null = null;
         let projectRootRegex: RegExp | null = null;
+        let projectRoot = vscode.workspace.workspaceFolders?.[0].uri?.fsPath;
 
         for (const entry of config().specific) {
             let matches = false;
@@ -159,12 +160,13 @@ export class PathDefinitionProvider implements DefinitionProvider {
             if (matches) {
                 defaultFile = entry.defaultFile;
 
-                if (entry.relativeRegex) {
-                    relativeRegex = entry.relativeRegex;
-                }
+                if (entry.relativeRegex) { relativeRegex = entry.relativeRegex; }
+                if (entry.projectRootRegex) { projectRootRegex = entry.projectRootRegex; }
 
-                if (entry.projectRootRegex) {
-                    projectRootRegex = entry.projectRootRegex;
+                if (entry.assumedProjectRoot) {
+                    projectRoot = !path.isAbsolute(entry.assumedProjectRoot) 
+                        ? path.join(projectRoot ?? "", entry.assumedProjectRoot)
+                        : entry.assumedProjectRoot;
                 }
 
                 break;
@@ -189,13 +191,11 @@ export class PathDefinitionProvider implements DefinitionProvider {
         }
 
         if (projectRootRegex?.test(targetStr)) {
-            const rootPath = vscode.workspace.workspaceFolders?.[0].uri;
-
-            if (!rootPath) {
+            if (!projectRoot) {
                 return [];
             }
 
-            let fullPath = path.join(rootPath.fsPath, targetStr);
+            let fullPath = path.join(projectRoot, targetStr);
 
             const result = await getNavigationResult(fullPath, defaultFile);
             if (result) {

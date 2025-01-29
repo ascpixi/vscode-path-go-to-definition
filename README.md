@@ -27,6 +27,7 @@ The `pathGoToDefinition.specific` setting is an array of objects of the given ty
 * `projectRootRegex`: The regex to use when checking for paths that are relative to the project's root directory. Matches the whole string. If null or empty, uses the global default. (`string` or `null`)
 * `relativeRegex`: The regex to use when checking for paths that are relative to the directory the file is in. Matches the whole string. If null or empty, uses the global default. (`string` or `null`)
 * `defaultFile`: If a path points to a directory, the extension will navigate to the file with this name in that directory. (`string` or `null`)
+* `assumedProjectRoot`: Paths detected with this configuration set will assume this path as the project root. This path may itself be relative to the real project root.
 
 The defaults for these settings are:
 

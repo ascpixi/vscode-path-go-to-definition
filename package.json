@@ -78,11 +78,16 @@
                 "type": ["string", "null"],
                 "description": "If a path points to a directory, the extension will navigate to the file with this name in that directory.",
                 "default": null
+              },
+              "assumedProjectRoot": {
+                "type": ["string", "null"],
+                "description": "Paths detected with this configuration set will assume this path as the project root. This path may itself be relative to the real project root.",
+                "default": null
               }
             }
           }
         }
-      } 
+      }
     }
   },
   "scripts": {
@@ -93,14 +98,15 @@
     "lint": "eslint src --ext ts"
   },
   "devDependencies": {
-    "@types/vscode": "^1.90.0",
     "@types/mocha": "^10.0.6",
-    "@types/node": "20.x",
+    "@types/node": "^22.12.0",
+    "@types/vscode": "^1.96.0",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.5",
     "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
-  }
+    "@vscode/test-electron": "^2.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {}
 }
