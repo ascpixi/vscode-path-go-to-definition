@@ -74,6 +74,11 @@
                 "default": null,
                 "description": "The regex to use when checking for paths that are relative to the directory the file is in. Matches the whole string. If null or empty, uses the global default."
               },
+              "pathStringRegex": {
+                "type": ["string", "null"],
+                "default": null,
+                "description": "The regex to use when scanning for path strings in addition to regular string scanning. The last group is used as the string. Matches the entire line. If null or empty, this behavior is disabled."
+              },
               "defaultFile": {
                 "type": ["string", "null"],
                 "description": "If a path points to a directory, the extension will navigate to the file with this name in that directory.",

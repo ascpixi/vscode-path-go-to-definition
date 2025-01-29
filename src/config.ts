@@ -46,6 +46,7 @@ function parseConfigValues() {
         path: string | null,
         projectRootRegex: string | null,
         relativeRegex: string | null,
+        pathStringRegex: string | null,
         defaultFile: string | null,
         assumedProjectRoot: string | null
     }[]>("specific");
@@ -60,6 +61,7 @@ function parseConfigValues() {
             path: tryParseRegex(x.path, "specific entry path"),
             projectRootRegex: tryParseRegex(x.projectRootRegex, "specific entry project root regex"),
             relativeRegex: tryParseRegex(x.relativeRegex, "specific entry relative"),
+            pathStringRegex: tryParseRegex(x.pathStringRegex, "specific path string tokenizer"),
             defaultFile: x.defaultFile,
             assumedProjectRoot: x.assumedProjectRoot
         })) ?? []

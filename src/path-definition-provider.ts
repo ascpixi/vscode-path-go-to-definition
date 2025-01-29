@@ -128,23 +128,10 @@ export class PathDefinitionProvider implements DefinitionProvider {
                 quotes: ["'", '"']
             };
 
-        const allStrings = getStringsOnLine(line, props.quotes, props.escapes);
-        let targetStr: string | null = null;
-
-        for (const str of allStrings) {
-            if (str.start <= position.character && str.end >= position.character) {
-                targetStr = line.substring(str.start, str.end);
-                break;
-            }
-        }
-
-        if (targetStr === null) {
-            return []; // No string found at the position of the cursor.
-        }
-
         let defaultFile: string | null = null;
         let relativeRegex: RegExp | null = null;
         let projectRootRegex: RegExp | null = null;
+        let pathStringRegex: RegExp | null = null;
         let projectRoot = vscode.workspace.workspaceFolders?.[0].uri?.fsPath;
 
         for (const entry of config().specific) {
@@ -157,20 +144,23 @@ export class PathDefinitionProvider implements DefinitionProvider {
                 matches = true;
             }
 
-            if (matches) {
-                defaultFile = entry.defaultFile;
-
-                if (entry.relativeRegex) { relativeRegex = entry.relativeRegex; }
-                if (entry.projectRootRegex) { projectRootRegex = entry.projectRootRegex; }
-
-                if (entry.assumedProjectRoot) {
-                    projectRoot = !path.isAbsolute(entry.assumedProjectRoot) 
-                        ? path.join(projectRoot ?? "", entry.assumedProjectRoot)
-                        : entry.assumedProjectRoot;
-                }
-
-                break;
+            if (!matches) {
+                continue;
             }
+
+            defaultFile = entry.defaultFile;
+
+            if (entry.relativeRegex) { relativeRegex = entry.relativeRegex; }
+            if (entry.projectRootRegex) { projectRootRegex = entry.projectRootRegex; }
+            if (entry.pathStringRegex) { pathStringRegex = entry.pathStringRegex; }
+
+            if (entry.assumedProjectRoot) {
+                projectRoot = !path.isAbsolute(entry.assumedProjectRoot) 
+                    ? path.join(projectRoot ?? "", entry.assumedProjectRoot)
+                    : entry.assumedProjectRoot;
+            }
+
+            break;
         }
 
         if (!projectRootRegex) {
@@ -179,6 +169,31 @@ export class PathDefinitionProvider implements DefinitionProvider {
 
         if (!relativeRegex) {
             relativeRegex = config().relativeRegex;
+        }
+
+        const allStrings = getStringsOnLine(line, props.quotes, props.escapes);
+        if (pathStringRegex) {
+            allStrings.push(
+                ...Array.from(line.matchAll(new RegExp(pathStringRegex.source, "g")))
+                    .map(x => x[x.length - 1])
+                    .map(x => ({
+                        start: line.indexOf(x),
+                        end: line.indexOf(x) + x.length
+                    }))
+            );
+        }
+
+        let targetStr: string | null = null;
+
+        for (const str of allStrings) {
+            if (str.start <= position.character && str.end >= position.character) {
+                targetStr = line.substring(str.start, str.end);
+                break;
+            }
+        }
+
+        if (targetStr === null) {
+            return []; // No string found at the position of the cursor.
         }
 
         if (relativeRegex?.test(targetStr)) {
